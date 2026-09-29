@@ -68,19 +68,58 @@ export const HeatRateCurveChart: React.FC<HeatRateCurveChartProps> = ({
           </div>
         </div>
 
-        {/* Legend / Metrics Banner with clear visual hierarchy */}
-        <div className="grid grid-cols-3 gap-1.5 my-1.5 text-center shrink-0">
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Current Load</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block">462 MW</span>
+        {/* Legend / Metrics Banner aligned horizontally with curvy sparklines */}
+        <div className="grid grid-cols-3 gap-1.5 my-1.5 text-xs shrink-0">
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Current Load</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">462 MW</span>
+            </div>
+            <svg width="40" height="18" viewBox="0 0 40 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 13 C 10 16, 18 7, 26 11 C 32 14, 35 7, 38 6"
+                fill="none"
+                stroke="#3b82f6"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="38" cy="6" r="2" fill="#3b82f6" />
+            </svg>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">OEM Target</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block">6,700 BTU</span>
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">OEM Target</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">6,700 BTU</span>
+            </div>
+            <svg width="40" height="18" viewBox="0 0 40 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 7 C 10 6, 18 11, 26 8 C 32 10, 35 7, 38 9"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="38" cy="9" r="2" fill="#10b981" />
+            </svg>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Actual Rate</span>
-            <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block">6,820 BTU</span>
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Actual Rate</span>
+              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block truncate">6,820 BTU</span>
+            </div>
+            <svg width="40" height="18" viewBox="0 0 40 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 13 C 10 14, 18 8, 26 11 C 32 6, 35 5, 38 4"
+                fill="none"
+                stroke="#f43f5e"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="38" cy="4" r="2" fill="#f43f5e" />
+            </svg>
           </div>
         </div>
 

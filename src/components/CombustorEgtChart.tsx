@@ -44,23 +44,75 @@ export const CombustorEgtChart: React.FC<CombustorEgtChartProps> = ({
           </div>
         </div>
 
-        {/* Dynamic Metric Tiles Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 my-1.5 text-xs shrink-0">
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Spread Anomaly</span>
-            <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block">26.0°C Spread</span>
+        {/* Dynamic Metric Tiles Strip aligned horizontally with curvy sparklines */}
+        <div className="grid grid-cols-4 gap-1.5 my-1.5 text-xs shrink-0">
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Spread Anomaly</span>
+              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block truncate">26.0°C Spread</span>
+            </div>
+            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 13 C 8 12, 14 15, 20 8 C 25 3, 30 11, 34 4"
+                fill="none"
+                stroke="#f43f5e"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="34" cy="4" r="2" fill="#f43f5e" />
+            </svg>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Array Mean EGT</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block">603°C</span>
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Array Mean EGT</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">603°C</span>
+            </div>
+            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 9 C 8 12, 15 6, 22 10 C 28 8, 30 11, 34 9"
+                fill="none"
+                stroke="#64748b"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="34" cy="9" r="2" fill="#64748b" />
+            </svg>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Allowable Band</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block">585°C – 621°C</span>
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Allowable Band</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">585°C – 621°C</span>
+            </div>
+            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 8 C 8 6, 15 10, 22 7 C 28 9, 31 7, 34 8"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="34" cy="8" r="2" fill="#10b981" />
+            </svg>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">Can 4 Deviation</span>
-            <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block">578°C (-26°C)</span>
+          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
+            <div className="text-left min-w-0">
+              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Can 4 Deviation</span>
+              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block truncate">578°C (-26°C)</span>
+            </div>
+            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 6 C 8 7, 15 13, 22 11 C 28 15, 31 16, 34 15"
+                fill="none"
+                stroke="#f43f5e"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="34" cy="15" r="2" fill="#f43f5e" />
+            </svg>
           </div>
         </div>
 

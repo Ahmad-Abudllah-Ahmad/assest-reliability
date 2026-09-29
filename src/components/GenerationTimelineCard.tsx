@@ -55,7 +55,7 @@ export const GenerationTimelineCard: React.FC<GenerationTimelineCardProps> = ({
   onNavigateToCatalog
 }) => {
   const [timelineData, setTimelineData] = useState<TimelinePoint[]>(TIMELINE_DATA);
-  const [currentMW, setCurrentMW] = useState<number>(462.1);
+  const [currentMW, setCurrentMW] = useState<number>(461.0);
 
   // Live telemetry stream: generator governor micro-fluctuations every 1.6 seconds
   useEffect(() => {
@@ -63,7 +63,7 @@ export const GenerationTimelineCard: React.FC<GenerationTimelineCardProps> = ({
       const now = Date.now();
       const wave = Math.sin(now / 1400) * 0.65 + Math.cos(now / 2200) * 0.35;
       const jitter = (Math.random() - 0.5) * 0.25;
-      const liveMW = parseFloat((462.0 + wave + jitter).toFixed(1));
+      const liveMW = parseFloat((461.0 + wave + jitter).toFixed(1));
 
       setCurrentMW(liveMW);
       setTimelineData(prev => prev.map(pt => {
@@ -173,19 +173,58 @@ export const GenerationTimelineCard: React.FC<GenerationTimelineCardProps> = ({
           </div>
         </div>
 
-        {/* Legend Summary Bar with live updating values */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-2.5 my-1.5 sm:my-2 text-center text-xs shrink-0">
-          <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider">Live Actual Output</span>
-            <span className="font-mono font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm mt-0.5 block">{currentMW.toFixed(1)} MW</span>
+        {/* Legend Summary Bar with live updating values & curvy sparklines */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-2.5 my-1.5 sm:my-2 text-xs shrink-0">
+          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+            <div className="text-left min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Live Actual Output</span>
+              <span className="font-mono font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm mt-0.5 block truncate">{currentMW.toFixed(1)} MW</span>
+            </div>
+            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 13 C 10 16, 16 6, 24 11 C 32 16, 36 6, 42 8"
+                fill="none"
+                stroke="#3b82f6"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="42" cy="8" r="2.5" fill="#3b82f6" />
+            </svg>
           </div>
-          <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider">Contract Target</span>
-            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm mt-0.5 block">480 MW Baseline</span>
+          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+            <div className="text-left min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Contract Target</span>
+              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm mt-0.5 block truncate">480 MW Baseline</span>
+            </div>
+            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 10 C 12 7, 20 12, 28 8 C 34 6, 38 10, 42 7"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="42" cy="7" r="2.5" fill="#10b981" />
+            </svg>
           </div>
-          <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider">Thermal Derate</span>
-            <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-xs sm:text-sm mt-0.5 block">-{derateGap} MW Gap</span>
+          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+            <div className="text-left min-w-0">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Thermal Derate</span>
+              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-xs sm:text-sm mt-0.5 block truncate">-{Math.round(derateGap)} MW Gap</span>
+            </div>
+            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
+              <path
+                d="M 2 6 C 10 7, 18 14, 26 10 C 32 15, 36 17, 42 16"
+                fill="none"
+                stroke="#f43f5e"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="42" cy="16" r="2.5" fill="#f43f5e" />
+            </svg>
           </div>
         </div>
 
