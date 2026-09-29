@@ -578,10 +578,10 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 shadow-xs shadow-cyan-600/20 transition cursor-pointer active:scale-95"
-            title="Add New Machinery or Component"
+            title="Add Machinery"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add Machinery / Component</span>
+            <span>Add Machinery</span>
           </button>
         </div>
       </div>

@@ -553,7 +553,7 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/90 shrink-0">
           <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-            Add Machinery or Component
+            Add Machinery
           </h3>
 
           <button

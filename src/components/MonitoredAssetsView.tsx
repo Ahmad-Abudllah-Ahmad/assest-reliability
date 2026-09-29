@@ -193,7 +193,7 @@ export const MonitoredAssetsView: React.FC<MonitoredAssetsViewProps> = ({
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xs shadow-blue-600/20 transition cursor-pointer active:scale-95 shrink-0"
-            title="Add New Machinery or Component"
+            title="Add Machinery"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Add Machinery</span>

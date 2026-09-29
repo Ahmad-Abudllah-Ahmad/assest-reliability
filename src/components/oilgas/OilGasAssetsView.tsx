@@ -140,10 +140,10 @@ export const OilGasAssetsView: React.FC<OilGasAssetsViewProps> = ({
               <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xs shadow-emerald-600/20 transition cursor-pointer active:scale-95 shrink-0"
-                title="Add New Machinery or Component"
+                title="Add Machinery"
               >
                 <Plus className="h-3.5 w-3.5" />
-                <span>Add Machinery / Component</span>
+                <span>Add Machinery</span>
               </button>
             </div>
           }
