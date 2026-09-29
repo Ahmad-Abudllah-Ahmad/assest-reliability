@@ -307,6 +307,128 @@ export const DOMAIN_MACHINERY_PRESETS: Record<'power' | 'wind' | 'solar' | 'oilg
   ]
 };
 
+export const DOMAIN_CATEGORIES: Record<'power' | 'wind' | 'solar' | 'oilgas', string[]> = {
+  power: [
+    'Steam Cycle Rotating Machinery',
+    'Heavy-Duty Combustion Turbine',
+    'Steam Turbine Island',
+    'High Voltage Switchyard',
+    'Condenser Cooling Circuit',
+    'Heat Recovery Steam Generator (HRSG)',
+    'Turbine Lube Oil Auxiliary Skid',
+    'Water Treatment & Demineralization'
+  ],
+  wind: [
+    'High-Speed Planetary Drivetrain',
+    'Collector Substation Infrastructure',
+    'Direct Drive Synchronous Generator',
+    'Meteorological Sensing Station',
+    'Electro-Hydraulic Aerodynamic Safety',
+    'Rotor Blade & Pitch Mechanism',
+    'Nacelle Yaw Drive System'
+  ],
+  solar: [
+    'Utility-Scale Central Inverter',
+    'Containerized Lithium Iron Phosphate',
+    'Bifacial Tracking Subsystem',
+    'Medium Voltage Step-Up Unit',
+    'PV String Aggregation & Protection',
+    'Smart DC Combiner Array',
+    'Weather & Solar Irradiance Station'
+  ],
+  oilgas: [
+    'Centrifugal Offshore Compression',
+    'Deepwater Subsea Tree & Choke',
+    'High-Pressure Multistage Export',
+    'Primary Phase Separation Vessel',
+    'Gas Treatment & Water Dewpoint',
+    'Produced Water Hydrocyclone Skid',
+    'Gas Turbine Generator (Offshore GTG)'
+  ]
+};
+
+export const DOMAIN_CAPACITIES: Record<'power' | 'wind' | 'solar' | 'oilgas', string[]> = {
+  power: [
+    '3,200 gpm @ 2,100 psig',
+    '160 MW / 50 Hz',
+    '110 MW Subcritical',
+    '220 MVA / 230 kV',
+    '45,000 gpm @ 45 psig',
+    '180 MW / 60 Hz Base Load',
+    '1,250 gpm @ 850 psig'
+  ],
+  wind: [
+    '5.6 MW / 162m Rotor',
+    '65 MVA / 34.5 kV to 230 kV',
+    '5.0 MW / 145m Rotor',
+    '120m Hub-Height Profiler',
+    '210 bar / 3x Accumulators',
+    '4.2 MW / 150m Rotor',
+    '3.4 MW / 136m Rotor'
+  ],
+  solar: [
+    '4.4 MW / 1500V DC',
+    '5.0 MWh / 2.5 MW 2-Hour',
+    '1,280 Strings / 384 kWp',
+    '5.0 MVA / 34.5 kV',
+    '32 Inputs / 1500V DC',
+    '3.5 MW / 1500V DC',
+    '2.5 MW / 1000V DC'
+  ],
+  oilgas: [
+    '8,500 HP / 650 psig',
+    '12,500 bpd Flow Envelope',
+    '3,500 HP / 1,450 psig',
+    '25,000 bpd / 85 bar',
+    '120 MMscf/d @ 75 bar',
+    '15,000 bpd @ 350 psig',
+    '25,000 bpd Produced Water'
+  ]
+};
+
+export const DOMAIN_METRICS: Record<'power' | 'wind' | 'solar' | 'oilgas', { label: string; defaultValue: string }[]> = {
+  power: [
+    { label: 'Shaft Radial Vibration', defaultValue: '1.4 mm/s' },
+    { label: 'Exhaust Temp Spread', defaultValue: '11.8 °C' },
+    { label: 'Thrust Bearing Temp', defaultValue: '72.4 °C' },
+    { label: 'Top Oil Temperature', defaultValue: '54.0 °C' },
+    { label: 'Vibration Velocity', defaultValue: '2.1 mm/s' },
+    { label: 'Lube Oil Header Pressure', defaultValue: '2.5 bar' },
+    { label: 'Active MW Output', defaultValue: '156 MW' },
+    { label: 'Combustor Dynamic Pressure', defaultValue: '0.42 psi' }
+  ],
+  wind: [
+    { label: 'High-Speed Bearing Vib', defaultValue: '1.1 mm/s' },
+    { label: 'Winding Hotspot Temp', defaultValue: '56.2 °C' },
+    { label: 'Nacelle Acceleration', defaultValue: '0.85 mm/s' },
+    { label: 'Wind Inflow Shear Alpha', defaultValue: '0.14 α' },
+    { label: 'System Accumulator Pressure', defaultValue: '208 bar' },
+    { label: 'Gearbox Oil Temp', defaultValue: '62.0 °C' },
+    { label: 'Rotor RPM', defaultValue: '12.4 rpm' },
+    { label: 'Blade Pitch Response Time', defaultValue: '480 ms' }
+  ],
+  solar: [
+    { label: 'Inverter MPPT Efficiency', defaultValue: '98.9%' },
+    { label: 'Cell Voltage Variance', defaultValue: '12 mV' },
+    { label: 'Backtracking Angular Error', defaultValue: '0.2°' },
+    { label: 'Insulating Fluid Dielectric', defaultValue: '68 kV' },
+    { label: 'String Current Imbalance', defaultValue: '1.2%' },
+    { label: 'IGBT Bridge Temperature', defaultValue: '58.4 °C' },
+    { label: 'DC Bus Operating Voltage', defaultValue: '1480 V' },
+    { label: 'Pyranometer Solar Irradiance', defaultValue: '985 W/m²' }
+  ],
+  oilgas: [
+    { label: 'Dry Gas Seal Differential', defaultValue: '14.2 bar' },
+    { label: 'Choke Differential Pressure', defaultValue: '68 bar' },
+    { label: 'NDE Radial Vibration', defaultValue: '1.3 mm/s' },
+    { label: 'Interface Level Stability', defaultValue: '±1.5%' },
+    { label: 'Water Dewpoint Margin', defaultValue: '-18.0 °C' },
+    { label: 'Discharge Pressure', defaultValue: '448 psig' },
+    { label: 'Coriolis Liquid Mass Flow', defaultValue: '14,200 bpd' },
+    { label: 'Produced Water Oil-in-Water', defaultValue: '18 ppm' }
+  ]
+};
+
 interface AddMachineryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -321,6 +443,10 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
   facilityType = 'power'
 }) => {
   const currentPresets = DOMAIN_MACHINERY_PRESETS[facilityType] || DOMAIN_MACHINERY_PRESETS.power;
+  const currentCategories = DOMAIN_CATEGORIES[facilityType] || DOMAIN_CATEGORIES.power;
+  const currentCapacities = DOMAIN_CAPACITIES[facilityType] || DOMAIN_CAPACITIES.power;
+  const currentMetrics = DOMAIN_METRICS[facilityType] || DOMAIN_METRICS.power;
+
   const initialPreset = currentPresets[0];
 
   const [selectedPresetId, setSelectedPresetId] = useState<string>(initialPreset.id);
@@ -352,8 +478,6 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
       });
     }
   }, [isOpen, facilityType]);
-
-  const activePreset = currentPresets.find(p => p.id === selectedPresetId);
 
   const handleSelectPreset = (presetId: string) => {
     setSelectedPresetId(presetId);
@@ -489,28 +613,6 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
             </select>
           </div>
 
-          {/* AI Detection Plug & Play Banner */}
-          {activePreset?.isAiDetected && (
-            <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/60 animate-fadeIn">
-              <div className="h-6 w-6 rounded-lg bg-blue-600/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
-                <Radio className="h-3.5 w-3.5 animate-pulse" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-blue-900 dark:text-blue-200 flex items-center gap-1.5">
-                    <span>Plug & Play Machine Telemetry</span>
-                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                      (AI Detection)
-                    </span>
-                  </span>
-                </div>
-                <p className="text-[10px] text-blue-700/80 dark:text-blue-300/80 mt-0.5 leading-relaxed">
-                  AI engine caught live telemetry from <strong className="font-semibold text-blue-900 dark:text-blue-100">{activePreset.aiDetectionSource}</strong>. Operating envelope and health baseline auto-calibrated.
-                </p>
-              </div>
-            </div>
-          )}
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
@@ -546,26 +648,36 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
               <label className="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
                 Category / Subsystem
               </label>
-              <input
-                type="text"
+              <select
                 value={form.category}
                 onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
-                placeholder="e.g. Combustion Turbine"
-                className="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
+                className="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium cursor-pointer"
+              >
+                {currentCategories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+                {!currentCategories.includes(form.category) && form.category && (
+                  <option value={form.category}>{form.category}</option>
+                )}
+              </select>
             </div>
 
             <div>
               <label className="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
                 Rated Capacity / Spec
               </label>
-              <input
-                type="text"
+              <select
                 value={form.ratedCapacity}
                 onChange={(e) => setForm(prev => ({ ...prev, ratedCapacity: e.target.value }))}
-                placeholder="e.g. 160 MW Rated"
-                className="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
+                className="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium cursor-pointer"
+              >
+                {currentCapacities.map((cap) => (
+                  <option key={cap} value={cap}>{cap}</option>
+                ))}
+                {!currentCapacities.includes(form.ratedCapacity) && form.ratedCapacity && (
+                  <option value={form.ratedCapacity}>{form.ratedCapacity}</option>
+                )}
+              </select>
             </div>
           </div>
 
@@ -588,20 +700,34 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
               <label className="block text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
                 Primary Telemetry Point
               </label>
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <select
                   value={form.metricLabel}
-                  onChange={(e) => setForm(prev => ({ ...prev, metricLabel: e.target.value }))}
-                  placeholder="Metric (e.g. Vibration)"
-                  className="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none"
-                />
+                  onChange={(e) => {
+                    const newLabel = e.target.value;
+                    const matched = currentMetrics.find(m => m.label === newLabel);
+                    setForm(prev => ({
+                      ...prev,
+                      metricLabel: newLabel,
+                      metricValue: matched ? matched.defaultValue : prev.metricValue
+                    }));
+                  }}
+                  className="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium cursor-pointer"
+                >
+                  {currentMetrics.map((m) => (
+                    <option key={m.label} value={m.label}>{m.label}</option>
+                  ))}
+                  {!currentMetrics.some(m => m.label === form.metricLabel) && form.metricLabel && (
+                    <option value={form.metricLabel}>{form.metricLabel}</option>
+                  )}
+                </select>
+
                 <input
                   type="text"
                   value={form.metricValue}
                   onChange={(e) => setForm(prev => ({ ...prev, metricValue: e.target.value }))}
-                  placeholder="Value (e.g. 1.2 mm/s)"
-                  className="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none"
+                  placeholder="Value (e.g. 1.4 mm/s)"
+                  className="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono font-semibold"
                 />
               </div>
             </div>
@@ -642,4 +768,5 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
     </div>
   );
 };
+
 
