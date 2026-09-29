@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/modules",
+    "src/context",
+    "src/lib/mockData.ts",
+    "src/components/AppShell.tsx",
+    "src/components/Sidebar.tsx",
+    "src/components/UI.tsx",
+    "src/components/GenerationPriceChart.tsx",
+    "src/components/FleetAssetCards.tsx",
+    "src/components/AiOptimizationView.tsx",
+    "src/components/AiRecommendationHub.tsx",
+    "src/components/AiDispatcherDrawer.tsx",
+    "src/components/EvidencePackageModal.tsx",
+    "src/components/ToastContainer.tsx"
+  ]
+}
