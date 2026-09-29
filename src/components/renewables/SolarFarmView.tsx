@@ -49,7 +49,8 @@ import {
   Activity,
   Calendar,
   Maximize2,
-  ArrowLeft
+  ArrowLeft,
+  GripVertical
 } from 'lucide-react';
 import { ActiveTab } from '../../types';
 import { InvestigationDrawer } from '../InvestigationDrawer';
@@ -1096,7 +1097,17 @@ function enrichSolarInvestigationCase(c: any) {
   };
 }
 
-function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleLogCase, onSelectCase }: any) {
+const SEVERITY_WEIGHT_SOLAR: Record<string, number> = {
+  'Critical': 4,
+  'High': 3,
+  'Medium': 2,
+  'Low': 1,
+};
+
+function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseSeverity, handleLogCase, onSelectCase, onNavigateToCatalog }: any) {
+  const [draggedCaseId, setDraggedCaseId] = useState<string | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+
   const COLUMNS = [
     { id: 'Unassigned', label: 'UNASSIGNED', badgeStyle: 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700' },
     { id: 'Diagnosing', label: 'DIAGNOSING', badgeStyle: 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800' },
@@ -1106,83 +1117,216 @@ function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleLogCase, on
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'Critical': return 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20 font-bold';
-      case 'High': return 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 font-bold';
-      case 'Medium': return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/20 font-semibold';
-      case 'Low': return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 font-medium';
-      default: return 'bg-slate-100 text-slate-700';
+      case 'Critical': return 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30';
+      case 'High': return 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30';
+      case 'Medium': return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 border-yellow-500/30';
+      case 'Low': return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700';
+      default: return 'bg-slate-100 text-slate-700 border-slate-300';
     }
   };
 
   return (
-    <div className="space-y-5 animate-fadeIn">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-5 shadow-xs">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-            <Layers className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            Cases Board — Solar Farm
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Investigate machine condition alerts, assign engineers, and manage investigation work orders
-          </p>
+    <div className="h-full flex-1 flex flex-col min-h-0 gap-2 2xl:gap-2.5 animate-fadeIn select-none">
+      {/* Header Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 2xl:p-3 shadow-xs shrink-0">
+        <div className="flex items-center gap-2.5">
+          {onNavigateToCatalog && (
+            <button
+              onClick={onNavigateToCatalog}
+              className="h-7 w-7 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/90 dark:border-slate-600/80 shadow-2xs hover:shadow-xs active:scale-90 transition-all duration-200 cursor-pointer shrink-0 group focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              title="Back to Industrial Operations Catalog"
+              aria-label="Back to Catalog"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 text-slate-600 dark:text-slate-300 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            </button>
+          )}
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
+              <Layers className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              Cases Board
+            </h2>
+            <p className="text-[11px] text-slate-400 truncate">
+              Investigate machine condition alerts, assign engineers, and drag tasks across workflow stages
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low')} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-600/20 transition cursor-pointer">
-            <Plus className="h-4 w-4" />
-            <span>Log New Solar Case</span>
+
+        {/* Quick Action: Log New Case */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-600/20 transition cursor-pointer active:scale-95"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Log New Case</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 2xl:gap-6 items-start">
+      {/* 4 Distinct Workflow Columns with Drag and Drop Support */}
+      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2.5 2xl:gap-3 items-stretch">
         {COLUMNS.map((col) => {
-          const items = cases.filter((c: any) => c.status === col.id);
+          // Sort tasks within stack by severity weight in real time (Critical -> High -> Medium -> Low)
+          const columnCases = cases
+            .filter((c: any) => c.status === col.id)
+            .sort((a: any, b: any) => {
+              const weightDiff = (SEVERITY_WEIGHT_SOLAR[b.severity] || 0) - (SEVERITY_WEIGHT_SOLAR[a.severity] || 0);
+              if (weightDiff !== 0) return weightDiff;
+              return (a.id || '').localeCompare(b.id || '');
+            });
+
+          const isOverThisCol = dragOverColumn === col.id;
+
           return (
-            <div key={col.id} className="w-full bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex flex-col min-h-[580px] 2xl:min-h-[680px]">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200/80 dark:border-slate-800 px-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">{col.label}</span>
-                  <span className={`text-[11px] font-bold px-2 py-0.2 rounded-full border shadow-xs ${col.badgeStyle}`}>{items.length}</span>
+            <div 
+              key={col.id} 
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (dragOverColumn !== col.id) {
+                  setDragOverColumn(col.id);
+                }
+              }}
+              onDragLeave={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  if (dragOverColumn === col.id) {
+                    setDragOverColumn(null);
+                  }
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const caseId = e.dataTransfer.getData('text/plain') || draggedCaseId;
+                if (caseId) {
+                  handleUpdateCaseStatus(caseId, col.id);
+                }
+                setDraggedCaseId(null);
+                setDragOverColumn(null);
+              }}
+              className={`w-full bg-slate-100/70 dark:bg-slate-900/60 border rounded-2xl p-2.5 flex flex-col h-full min-h-0 transition-all duration-200 ${
+                isOverThisCol
+                  ? 'ring-2 ring-blue-500 bg-blue-50/40 dark:bg-blue-950/40 border-blue-400 dark:border-blue-600 scale-[1.008]'
+                  : 'border-slate-200 dark:border-slate-800'
+              }`}
+            >
+              {/* Column Header */}
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/80 dark:border-slate-800 px-1 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                    {col.label}
+                  </span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full border shadow-xs ${col.badgeStyle}`}>
+                    {columnCases.length}
+                  </span>
                 </div>
               </div>
-              <div className="space-y-3 flex-1 overflow-y-auto">
-                {items.length === 0 ? (
-                  <div className="h-32 flex flex-col items-center justify-center text-xs text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center">
+
+              {/* Cases Cards List */}
+              <div className="space-y-2 flex-1 min-h-0 overflow-y-auto pr-0.5">
+                {columnCases.length === 0 ? (
+                  <div className={`h-28 flex flex-col items-center justify-center text-xs border-2 border-dashed rounded-xl p-3 text-center transition-colors ${
+                    isOverThisCol 
+                      ? 'border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/30 font-semibold' 
+                      : 'text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800'
+                  }`}>
                     <span>No cases in this stage</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Drag or select stage to transfer</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                      {isOverThisCol ? 'Drop task here to move stage' : 'Drag task here or select stage to transfer'}
+                    </span>
                   </div>
                 ) : (
-                  items.map((c: any) => (
-                    <div key={c.id} onClick={() => onSelectCase(c)} className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 rounded-2xl p-4 sm:p-4.5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-3 group">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-xs bg-emerald-500/10 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-lg border border-emerald-500/20">{c.id}</span>
-                        <span className={`text-xs uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${getSeverityBadge(c.severity)}`}>{c.severity}</span>
-                      </div>
-                      <div>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">{c.title}</h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
-                          <span>{c.asset}</span>
-                        </p>
-                      </div>
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs gap-2">
-                        <span className="text-slate-500 dark:text-slate-400 truncate font-medium">By: <strong className="text-slate-700 dark:text-slate-200 font-semibold">{c.assignee || 'Unassigned'}</strong></span>
-                        <div className="relative flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                          <select
-                            value={c.status}
-                            onChange={(e) => handleUpdateCaseStatus(c.id, e.target.value)}
-                            className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer pr-5 appearance-none transition"
+                  columnCases.map((caseItem: any) => {
+                    const isBeingDragged = draggedCaseId === caseItem.id;
+
+                    return (
+                      <div
+                        key={caseItem.id}
+                        draggable={true}
+                        onDragStart={(e) => {
+                          setDraggedCaseId(caseItem.id);
+                          e.dataTransfer.setData('text/plain', caseItem.id);
+                          e.dataTransfer.effectAllowed = 'move';
+                        }}
+                        onDragEnd={() => {
+                          setDraggedCaseId(null);
+                          setDragOverColumn(null);
+                        }}
+                        onClick={() => onSelectCase(caseItem)}
+                        className={`w-full bg-white dark:bg-slate-800 border rounded-xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing flex flex-col justify-between space-y-2 group ${
+                          isBeingDragged
+                            ? 'opacity-40 scale-95 border-dashed border-blue-500 shadow-xl'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                        }`}
+                      >
+                        {/* Top Row: Green Case ID Badge & Severity Dropdown */}
+                        <div className="flex items-center justify-between gap-1">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <GripVertical className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 group-hover:text-slate-400 dark:group-hover:text-slate-500 transition-colors shrink-0" />
+                            <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-[11px] bg-emerald-500/10 dark:bg-emerald-950/40 px-2 py-0.2 rounded-md border border-emerald-500/20">
+                              {caseItem.id}
+                            </span>
+                          </div>
+
+                          {/* Interactive Priority/Severity Dropdown: changes move task up/down in real time */}
+                          <div 
+                            className="relative flex-shrink-0" 
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            <option value="Unassigned">Unassigned</option>
-                            <option value="Diagnosing">Diagnosing</option>
-                            <option value="Planned Maintenance">Planned Maint</option>
-                            <option value="Closed">Closed</option>
-                          </select>
-                          <ChevronDown className="h-3.5 w-3.5 text-slate-400 absolute right-1.5 top-2 pointer-events-none" />
+                            <select
+                              aria-label={`Change severity for ${caseItem.id}`}
+                              value={caseItem.severity}
+                              onChange={(e) => handleUpdateCaseSeverity?.(caseItem.id, e.target.value)}
+                              className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full border cursor-pointer appearance-none pr-4.5 transition focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs ${getSeverityBadge(caseItem.severity)}`}
+                              title="Click to change task severity (moves task up/down in real time)"
+                            >
+                              <option value="Critical" className="bg-white dark:bg-slate-800 text-rose-700 dark:text-rose-300 font-bold">Critical</option>
+                              <option value="High" className="bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-bold">High</option>
+                              <option value="Medium" className="bg-white dark:bg-slate-800 text-yellow-700 dark:text-yellow-300 font-semibold">Medium</option>
+                              <option value="Low" className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">Low</option>
+                            </select>
+                            <ChevronDown className="h-2.5 w-2.5 text-current absolute right-1.5 top-1.5 pointer-events-none opacity-70" />
+                          </div>
+                        </div>
+
+                        {/* Middle: Bold Font Title & Equipment Subtitle */}
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">
+                            {caseItem.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
+                            <span>{caseItem.asset || caseItem.equipment || 'Solar Inverter'}</span>
+                          </p>
+                        </div>
+
+                        {/* Footer: Assignee & Inline Status Dropdown Selector */}
+                        <div className="pt-2.5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs gap-2">
+                          <span className="text-slate-500 dark:text-slate-400 truncate font-medium text-[11px]">
+                            By: <strong className="text-slate-700 dark:text-slate-200 font-semibold">{caseItem.assignee || 'Solar Tech'}</strong>
+                          </span>
+
+                          {/* Inline Status Dropdown Selector */}
+                          <div 
+                            className="relative flex-shrink-0" 
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <select
+                              aria-label={`Change status for ${caseItem.id}`}
+                              value={caseItem.status}
+                              onChange={(e) => handleUpdateCaseStatus(caseItem.id, e.target.value)}
+                              className="bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer pr-5 appearance-none transition"
+                            >
+                              <option value="Unassigned">Unassigned</option>
+                              <option value="Diagnosing">Diagnosing</option>
+                              <option value="Planned Maintenance">Planned Maint</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                            <ChevronDown className="h-3 w-3 text-slate-400 absolute right-1.5 top-2 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -1360,6 +1504,11 @@ export const SolarFarmView: React.FC<{
     });
   };
 
+  const handleUpdateCaseSeverity = (id: string, newSeverity: string) => {
+    setCases((prev: any[]) => prev.map((c: any) => c.id === id ? { ...c, severity: newSeverity } : c));
+    showToast('Severity Updated', `Case ${id} priority set to "${newSeverity}".`);
+  };
+
   const page = overrideTab || (activeTab === 'diagnostics' ? 'overview' : activeTab);
 
   return (
@@ -1367,7 +1516,17 @@ export const SolarFarmView: React.FC<{
       {page === 'assets' && <AssetsPage showToast={showToast} cases={cases} handleLogCaseFromAsset={handleLogCaseFromAsset} getActiveCaseForAsset={getActiveCaseForAsset} />}
       {page === 'maintenance' && <MaintenancePage maintLogs={maintLogs} />}
       {page === 'optimizer' && <OptimizerPage showToast={showToast} tasks={tasks} handleDispatchTask={handleDispatchTask} onNavigateToCases={navigateToCases} />}
-      {page === 'cases' && <CasesPage showToast={showToast} cases={cases} handleUpdateCaseStatus={handleUpdateCaseStatus} handleLogCase={handleLogCase} onSelectCase={(c: any) => setSelectedCase(enrichSolarInvestigationCase(c))} />}
+      {page === 'cases' && (
+        <CasesPage
+          showToast={showToast}
+          cases={cases}
+          handleUpdateCaseStatus={handleUpdateCaseStatus}
+          handleUpdateCaseSeverity={handleUpdateCaseSeverity}
+          handleLogCase={handleLogCase}
+          onSelectCase={(c: any) => setSelectedCase(enrichSolarInvestigationCase(c))}
+          onNavigateToCatalog={onNavigateToCatalog}
+        />
+      )}
       {page === 'overview' && <OverviewPage onNavigateToCatalog={onNavigateToCatalog} />}
 
       <InvestigationDrawer

@@ -93,7 +93,8 @@ import {
   OffshoreExportSystem, 
   OffshoreFlareSystem, 
   OgCaseItem,
-  OgCaseStatus
+  OgCaseStatus,
+  OgCaseSeverity
 } from './types/oilGasTypes';
 
 export function App() {
@@ -400,6 +401,15 @@ export function App() {
       setSelectedCase(prev => prev ? { ...prev, status: newStatus as CaseStatus } : null);
     }
     addToast('info', 'PTW Status Updated', `Offshore Work Order ${id} updated to "${newStatus}".`);
+  };
+
+  // Action: Update O&G Case Severity
+  const handleUpdateOgCaseSeverity = (id: string, newSeverity: OgCaseSeverity) => {
+    setOgCases(prev => prev.map(c => c.id === id ? { ...c, severity: newSeverity } : c));
+    if (selectedCase && selectedCase.id === id) {
+      setSelectedCase(prev => prev ? { ...prev, severity: newSeverity as CaseSeverity } : null);
+    }
+    addToast('info', 'Severity Updated', `Offshore Work Order ${id} priority set to "${newSeverity}".`);
   };
 
   // Action: Dispatch Work Order from Drawer
@@ -1047,7 +1057,9 @@ RANKED PRIORITY SEQUENCE:
                 cases={ogCases}
                 onSelectCase={(c) => setSelectedCase(c as unknown as CaseItem)}
                 onUpdateCaseStatus={handleUpdateOgCaseStatus}
+                onUpdateCaseSeverity={handleUpdateOgCaseSeverity}
                 onOpenCreateModal={() => setIsCreateCaseOpen(true)}
+                onNavigateToCatalog={handleBackToCatalog}
               />
             )}
           </>
