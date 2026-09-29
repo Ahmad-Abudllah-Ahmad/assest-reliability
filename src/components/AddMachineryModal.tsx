@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Cpu, Activity, Zap, CheckCircle2, ShieldCheck, Radio, Sparkles } from 'lucide-react';
+import { X, Plus, Activity, Zap, CheckCircle2, ShieldCheck, Radio, Sparkles } from 'lucide-react';
 import { MonitoredAsset } from '../types';
 
 export interface NewMachineryData {
@@ -552,19 +552,9 @@ export const AddMachineryModal: React.FC<AddMachineryModalProps> = ({
       >
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/90 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className={`h-8 w-8 rounded-lg ${accent.bg} flex items-center justify-center text-white shadow-xs`}>
-              <Cpu className="h-4 w-4" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                Add Machinery or Component
-              </h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Register new industrial equipment into real-time condition monitoring
-              </p>
-            </div>
-          </div>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+            Add Machinery or Component
+          </h3>
 
           <button
             onClick={onClose}

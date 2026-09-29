@@ -196,7 +196,7 @@ export const MonitoredAssetsView: React.FC<MonitoredAssetsViewProps> = ({
             title="Add New Machinery or Component"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add Machinery / Component</span>
+            <span>Add Machinery</span>
           </button>
         </div>
       </div>
