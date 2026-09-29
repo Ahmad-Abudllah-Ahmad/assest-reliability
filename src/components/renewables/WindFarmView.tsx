@@ -61,6 +61,7 @@ import {
 } from 'lucide-react';
 import { ActiveTab } from '../../types';
 import { InvestigationDrawer } from '../InvestigationDrawer';
+import { AddMachineryModal, NewMachineryData } from '../AddMachineryModal';
 import {
   WIND_TURBINES,
   WIND_POWER_CURVE,
@@ -399,6 +400,58 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedAssetId, setExpandedAssetId] = useState<string | null>(null);
   const [modalAsset, setModalAsset] = useState<WindTurbine | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [extraTurbines, setExtraTurbines] = useState<any[]>([]);
+
+  const handleAddNewMachinery = (data: NewMachineryData) => {
+    const newTurbineCard = {
+      turbine: {
+        id: data.code,
+        status: 'Online',
+        windSpeedMs: 9.8,
+        powerKw: 4200,
+        rotorRpm: 12.4,
+        nacelleVibrationMmS: 1.2,
+        gearboxOilTempC: 62,
+        mainBearingTempC: 58,
+        generatorWindingTempC: 72,
+        pitchDeg: 1.5,
+        yawErrorDeg: 0.8,
+        underperforming: false
+      },
+      code: data.code,
+      name: data.name,
+      category: data.category || 'Wind Turbine',
+      ratedCapacity: data.ratedCapacity || '4.2 MW',
+      healthScore: data.healthScore,
+      statusText: data.healthScore < 80 ? 'Critical Advisory' : data.healthScore < 90 ? 'Under Advisory' : 'Optimal',
+      compactMetrics: [
+        { label: 'Wind Speed', value: '9.8 m/s', status: 'normal' as const },
+        { label: 'Gearbox Oil Temp', value: '62 °C', status: 'normal' as const },
+        { label: data.metricLabel || 'Nacelle Vibration', value: data.metricValue || '1.2 mm/s', status: 'normal' as const },
+        { label: 'Active Power', value: '4,200 kW', status: 'normal' as const }
+      ],
+      expandedMetrics: [
+        { label: 'Rotor RPM', value: '12.4 rpm', status: 'normal' as const },
+        { label: 'Main Bearing Temp', value: '58 °C', status: 'normal' as const },
+        { label: 'Generator Stator Temp', value: '72 °C', status: 'normal' as const },
+        { label: 'Blade Pitch Angle', value: '1.5°', status: 'normal' as const },
+        { label: 'Yaw Alignment Error', value: '0.8°', status: 'normal' as const }
+      ],
+      aiSummary: data.aiSummary || `${data.name} (${data.code}) successfully commissioned into Wind Farm Zone 1 monitoring.`,
+      healthTrend7d: [
+        { day: 'D-6', score: data.healthScore },
+        { day: 'D-5', score: data.healthScore },
+        { day: 'D-4', score: data.healthScore },
+        { day: 'D-3', score: data.healthScore },
+        { day: 'D-2', score: data.healthScore },
+        { day: 'D-1', score: data.healthScore },
+        { day: 'Today', score: data.healthScore }
+      ]
+    };
+    setExtraTurbines(prev => [newTurbineCard, ...prev]);
+    showToast?.('Machinery Commissioned', `${data.name} (${data.code}) added to fleet.`);
+  };
 
   const WIND_MODELS = [
     { name: 'Vestas V150 4.2 MW', capacity: '4.2 MW' },
@@ -452,10 +505,11 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
     return { turbine: t, code: t.id, name: model.name, category: 'Wind Turbine', ratedCapacity: model.capacity, healthScore, statusText, compactMetrics, expandedMetrics, aiSummary, healthTrend7d };
   });
 
-  const attentionCount = fleetCards.filter(a => a.healthScore < 90).length;
-  const optimalCount = fleetCards.filter(a => a.healthScore >= 90).length;
+  const allFleetCards = [...extraTurbines, ...fleetCards];
+  const attentionCount = allFleetCards.filter(a => a.healthScore < 90).length;
+  const optimalCount = allFleetCards.filter(a => a.healthScore >= 90).length;
 
-  const filteredAssets = fleetCards.filter(asset => {
+  const filteredAssets = allFleetCards.filter(asset => {
     if (filter === 'attention' && asset.healthScore >= 90) return false;
     if (filter === 'optimal' && asset.healthScore < 90) return false;
     if (searchQuery.trim()) {
@@ -517,11 +571,16 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold">
           <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-lg">
-            22 Units Optimal (90%+ Health)
+            {optimalCount} Units Optimal (90%+ Health)
           </span>
-          <span className="bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-3 py-1 rounded-lg">
-            3 Units Under Advisory
-          </span>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 shadow-xs shadow-cyan-600/20 transition cursor-pointer active:scale-95"
+            title="Add New Machinery or Component"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Machinery / Component</span>
+          </button>
         </div>
       </div>
 
@@ -651,7 +710,7 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
                       <span className="text-[10px] text-slate-400 font-normal">Click card to collapse</span>
                     </div>
                     <div className="space-y-1.5">
-                      {metrics.map((m, idx) => (
+                      {metrics.map((m: any, idx: number) => (
                         <div
                           key={idx}
                           className={`p-2 rounded-lg border text-xs flex items-center justify-between gap-2 ${
@@ -673,7 +732,7 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2 my-3">
-                    {metrics.map((m, idx) => (
+                    {metrics.map((m: any, idx: number) => (
                       <div
                         key={idx}
                         className={`p-2 rounded-lg border text-xs flex flex-col justify-between min-h-[50px] ${
@@ -749,6 +808,14 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
           );
         })}
       </div>
+
+      {/* Add Machinery / Component Modal */}
+      <AddMachineryModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddNewMachinery}
+        facilityType="wind"
+      />
     </div>
   );
 }

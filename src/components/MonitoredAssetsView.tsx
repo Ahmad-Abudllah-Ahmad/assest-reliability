@@ -17,15 +17,18 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Maximize2
+  Maximize2,
+  Plus
 } from 'lucide-react';
 import { MonitoredAsset } from '../types';
+import { AddMachineryModal, NewMachineryData } from './AddMachineryModal';
 
 interface MonitoredAssetsViewProps {
   assets: MonitoredAsset[];
   onSelectAsset: (asset: MonitoredAsset) => void;
   onLogCase: (asset: MonitoredAsset) => void;
   onNavigateToCatalog?: () => void;
+  onAddAsset?: (newAsset: MonitoredAsset) => void;
 }
 
 const SHOW_EQUIPMENT_THUMBNAILS = true;
@@ -56,10 +59,46 @@ export const MonitoredAssetsView: React.FC<MonitoredAssetsViewProps> = ({
   assets,
   onSelectAsset,
   onLogCase,
-  onNavigateToCatalog
+  onNavigateToCatalog,
+  onAddAsset
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedAssetId, setExpandedAssetId] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleAddNewMachinery = (data: NewMachineryData) => {
+    const statusType = data.healthScore < 80 ? 'critical' : data.healthScore < 90 ? 'warning' : 'optimal';
+    const statusText = statusType === 'optimal' ? 'Optimal' : statusType === 'warning' ? 'Under Advisory' : 'Critical Advisory';
+    
+    const newAsset: MonitoredAsset = {
+      id: `asset-${data.code.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now().toString().slice(-4)}`,
+      name: data.name,
+      code: data.code,
+      category: data.category || 'Combustion Turbine',
+      ratedCapacity: data.ratedCapacity || '160 MW Rated',
+      healthScore: data.healthScore,
+      statusText,
+      statusType,
+      metrics: [
+        { label: data.metricLabel || 'Active Load', value: data.metricValue || '156 MW', status: statusType },
+        { label: 'Vibration', value: '1.2 mm/s', status: 'optimal' },
+        { label: 'EGT Spread', value: '14°C', status: 'optimal' },
+        { label: 'Lube Header', value: '2.5 bar', status: 'normal' }
+      ],
+      healthTrend7d: [
+        { day: 'D-6', score: data.healthScore },
+        { day: 'D-5', score: data.healthScore },
+        { day: 'D-4', score: data.healthScore },
+        { day: 'D-3', score: data.healthScore },
+        { day: 'D-2', score: data.healthScore },
+        { day: 'D-1', score: data.healthScore },
+        { day: 'Today', score: data.healthScore }
+      ],
+      aiSummary: data.aiSummary || `${data.name} (${data.code}) successfully provisioned into active telemetry monitoring.`
+    };
+
+    onAddAsset?.(newAsset);
+  };
 
   const filteredAssets = assets.filter(asset => {
     // Text Search
@@ -133,13 +172,18 @@ export const MonitoredAssetsView: React.FC<MonitoredAssetsViewProps> = ({
     <div className="h-full flex-1 flex flex-col min-h-0 gap-2 2xl:gap-2.5 animate-fadeIn">
       {/* Search & Header Bar */}
       <div className="flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
             Monitored Assets ({filteredAssets.length})
           </span>
-          <span className="text-[10px] font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-            {filteredAssets.filter(a => a.healthScore < 90).length} Under Advisory
-          </span>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xs shadow-blue-600/20 transition cursor-pointer active:scale-95"
+            title="Add New Machinery or Component"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Machinery / Component</span>
+          </button>
         </div>
 
         <div className="relative w-full sm:w-64">
@@ -340,6 +384,14 @@ export const MonitoredAssetsView: React.FC<MonitoredAssetsViewProps> = ({
           })}
         </div>
       </div>
+
+      {/* Add Machinery / Component Modal */}
+      <AddMachineryModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddNewMachinery}
+        facilityType="power"
+      />
     </div>
   );
 };

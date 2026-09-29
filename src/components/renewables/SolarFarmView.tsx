@@ -53,6 +53,7 @@ import {
 } from 'lucide-react';
 import { ActiveTab } from '../../types';
 import { InvestigationDrawer } from '../InvestigationDrawer';
+import { AddMachineryModal, NewMachineryData } from '../AddMachineryModal';
 import {
   SOLAR_INVERTERS,
   SOLAR_TRACKERS,
@@ -398,6 +399,39 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedAssetId, setExpandedAssetId] = useState<string | null>(null);
   const [modalAsset, setModalAsset] = useState<SolarInverter | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [extraSolarCards, setExtraSolarCards] = useState<any[]>([]);
+
+  const handleAddNewMachinery = (data: NewMachineryData) => {
+    const newCard = {
+      caseId: data.code,
+      code: data.code,
+      name: data.name,
+      category: data.category || 'Central Inverter',
+      ratedCapacity: data.ratedCapacity || '3.5 MW',
+      healthScore: data.healthScore,
+      statusText: data.healthScore < 80 ? 'Critical Advisory' : data.healthScore < 90 ? 'Under Advisory' : 'Optimal',
+      compactMetrics: [
+        { label: 'Active Output', value: '3.2 MW', status: 'normal' as const },
+        { label: data.metricLabel || 'Efficiency', value: data.metricValue || '98.5 %', status: 'normal' as const },
+        { label: 'Internal Temp', value: '42 °C', status: 'normal' as const },
+        { label: 'DC Bus Voltage', value: '1480 V', status: 'normal' as const }
+      ],
+      expandedMetrics: [
+        { label: 'Active Output', value: '3.2 MW', status: 'normal' as const },
+        { label: data.metricLabel || 'Efficiency', value: data.metricValue || '98.5 %', status: 'normal' as const },
+        { label: 'Internal Temp', value: '42 °C', status: 'normal' as const },
+        { label: 'DC Bus Voltage', value: '1480 V', status: 'normal' as const },
+        { label: 'Daily Energy', value: '28.4 MWh', status: 'normal' as const },
+        { label: 'Inverter RUL', value: '34 months', status: 'normal' as const }
+      ],
+      aiSummary: data.aiSummary || `${data.name} (${data.code}) provisioned and synchronized with solar farm SCADA.`,
+      healthTrend7d: distinctHealthTrend(data.healthScore, 15),
+      inverter: null
+    };
+    setExtraSolarCards(prev => [newCard, ...prev]);
+    showToast?.('Machinery Commissioned', `${data.name} (${data.code}) added to solar fleet.`);
+  };
 
   const metricStatus = (warning: boolean, critical: boolean): 'normal' | 'warning' | 'critical' =>
     critical ? 'critical' : warning ? 'warning' : 'normal';
@@ -515,7 +549,7 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
     inverter: null as SolarInverter | null
   };
 
-  const fleetCards = [...inverterCards, ...trackerCards, bessCard];
+  const fleetCards = [...extraSolarCards, ...inverterCards, ...trackerCards, bessCard];
   const attentionCount = fleetCards.filter(a => a.healthScore < 90).length;
   const optimalCount = fleetCards.filter(a => a.healthScore >= 90).length;
 
@@ -581,11 +615,16 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold">
           <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-lg">
-            12 Units Optimal (90%+ Health)
+            {optimalCount} Units Optimal (90%+ Health)
           </span>
-          <span className="bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-3 py-1 rounded-lg">
-            2 Units Under Advisory
-          </span>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold text-white bg-amber-600 hover:bg-amber-500 shadow-xs shadow-amber-600/20 transition cursor-pointer active:scale-95"
+            title="Add New Machinery or Component"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Machinery / Component</span>
+          </button>
         </div>
       </div>
 
@@ -719,7 +758,7 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
                       <span className="text-[10px] text-slate-400 font-normal">Click card to collapse</span>
                     </div>
                     <div className="space-y-1.5">
-                      {metrics.map((m, idx) => (
+                      {metrics.map((m: any, idx: number) => (
                         <div
                           key={idx}
                           className={`p-2 rounded-lg border text-xs flex items-center justify-between gap-2 ${
@@ -741,7 +780,7 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2 my-3">
-                    {metrics.map((m, idx) => (
+                    {metrics.map((m: any, idx: number) => (
                       <div
                         key={idx}
                         className={`p-2 rounded-lg border text-xs flex flex-col justify-between min-h-[50px] ${
@@ -821,6 +860,14 @@ function AssetsPage({ showToast, cases, handleLogCaseFromAsset, getActiveCaseFor
           );
         })}
       </div>
+
+      {/* Add Machinery / Component Modal */}
+      <AddMachineryModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddNewMachinery}
+        facilityType="solar"
+      />
     </div>
   );
 }

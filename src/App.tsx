@@ -378,6 +378,12 @@ export function App() {
     addToast('info', 'Status Updated', `Case ${id} moved to "${newStatus}".`);
   };
 
+  // Action: Add New Machinery / Component
+  const handleAddMonitoredAsset = (newAsset: MonitoredAsset) => {
+    setMonitoredAssets(prev => [newAsset, ...prev]);
+    addToast('success', 'Machinery Registered', `${newAsset.name} (${newAsset.code}) added to monitored fleet.`);
+  };
+
   // Action: Update Case Severity
   const handleUpdateCaseSeverity = (id: string, newSeverity: CaseSeverity) => {
     setCases(prev => prev.map(c => c.id === id ? { ...c, severity: newSeverity } : c));
@@ -860,6 +866,7 @@ RANKED PRIORITY SEQUENCE:
                 onSelectAsset={handleSelectMonitoredAsset}
                 onLogCase={handleLogCaseFromMonitoredAsset}
                 onNavigateToCatalog={handleBackToCatalog}
+                onAddAsset={handleAddMonitoredAsset}
               />
             )}
 

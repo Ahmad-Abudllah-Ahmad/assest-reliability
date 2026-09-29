@@ -14,11 +14,13 @@ import {
   BarChart3,
   MapPin,
   HelpCircle,
-  Radio
+  Radio,
+  Plus
 } from 'lucide-react';
 import { AssetRulRadialChart } from './AssetRulRadialChart';
 import { InteractivePfdHmiMap } from './InteractivePfdHmiMap';
 import { OilGasPageHeader } from './OilGasPageHeader';
+import { AddMachineryModal, NewMachineryData } from '../AddMachineryModal';
 import { 
   RotatingEquipmentRul, 
   OffshoreSeparator, 
@@ -33,6 +35,7 @@ interface OilGasAssetsViewProps {
   storageTanks?: OffshoreStorageTank[];
   onLogCaseForAsset: (equipment: RotatingEquipmentRul) => void;
   onOpenJargonGuide?: () => void;
+  onAddEquipment?: (newEquipment: RotatingEquipmentRul) => void;
 }
 
 export const OilGasAssetsView: React.FC<OilGasAssetsViewProps> = ({
@@ -41,13 +44,43 @@ export const OilGasAssetsView: React.FC<OilGasAssetsViewProps> = ({
   wellheads = [],
   storageTanks = [],
   onLogCaseForAsset,
-  onOpenJargonGuide
+  onOpenJargonGuide,
+  onAddEquipment
 }) => {
   const [viewMode, setViewMode] = useState<'pfd' | 'radials' | 'cards'>('pfd');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [customEquipment, setCustomEquipment] = useState<RotatingEquipmentRul[]>([]);
 
-  const filteredEquipment = equipmentList.filter(e => {
+  const handleAddNewEquipment = (data: NewMachineryData) => {
+    const status = data.healthScore < 80 ? 'critical' : data.healthScore < 90 ? 'warning' : 'optimal';
+    const newEq: RotatingEquipmentRul = {
+      id: `eq-${data.code.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+      tag: data.code,
+      name: data.name,
+      category: (data.category as any) || 'Gas Compression',
+      rulPercent: data.healthScore,
+      hoursToService: Math.round((data.healthScore / 100) * 8760),
+      designLifeHours: 50000,
+      vibrationRmsMmS: 1.2,
+      vibrationLimitMmS: 4.5,
+      bearingTempC: 58,
+      bearingTempLimitC: 85,
+      dischargePressureBar: 32,
+      dischargePressureRatingBar: 45,
+      status,
+      statusLabel: status === 'optimal' ? 'Optimal Performance' : status === 'warning' ? 'Under Advisory' : 'Critical Anomaly',
+      diagnosticFinding: data.aiSummary || 'Equipment telemetry commissioned and within normal baseline.',
+      recommendedAction: 'Continue baseline vibration and thermal survey log.'
+    };
+    setCustomEquipment(prev => [newEq, ...prev]);
+    onAddEquipment?.(newEq);
+  };
+
+  const allEquipment = [...customEquipment, ...equipmentList];
+
+  const filteredEquipment = allEquipment.filter(e => {
     const matchesCategory = filterCategory === 'all' || e.category === filterCategory;
     const matchesSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           e.tag.toLowerCase().includes(searchQuery.toLowerCase());
@@ -65,41 +98,52 @@ export const OilGasAssetsView: React.FC<OilGasAssetsViewProps> = ({
           badgeText="SCADA HMI Active"
           badgeColor="emerald"
           actions={
-            <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 p-1 rounded-xl text-xs font-semibold">
-              <button
-                onClick={() => setViewMode('pfd')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                  viewMode === 'pfd'
-                    ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
-                <span>Interactive PFD Map</span>
-              </button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700/60 p-1 rounded-xl text-xs font-semibold">
+                <button
+                  onClick={() => setViewMode('pfd')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    viewMode === 'pfd'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                  <span>Interactive PFD Map</span>
+                </button>
+
+                <button
+                  onClick={() => setViewMode('radials')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    viewMode === 'radials'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  <span>RUL Radial Analytics</span>
+                </button>
+
+                <button
+                  onClick={() => setViewMode('cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    viewMode === 'cards'
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <span>Telemetry Cards</span>
+                </button>
+              </div>
 
               <button
-                onClick={() => setViewMode('radials')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                  viewMode === 'radials'
-                    ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-xs shadow-emerald-600/20 transition cursor-pointer active:scale-95 shrink-0"
+                title="Add New Machinery or Component"
               >
-                <BarChart3 className="h-3.5 w-3.5" />
-                <span>RUL Radial Analytics</span>
-              </button>
-
-              <button
-                onClick={() => setViewMode('cards')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                  viewMode === 'cards'
-                    ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-                <span>Telemetry Cards</span>
+                <Plus className="h-3.5 w-3.5" />
+                <span>Add Machinery / Component</span>
               </button>
             </div>
           }
@@ -194,6 +238,14 @@ export const OilGasAssetsView: React.FC<OilGasAssetsViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Add Machinery / Component Modal */}
+      <AddMachineryModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddNewEquipment}
+        facilityType="oilgas"
+      />
     </div>
   );
 };
