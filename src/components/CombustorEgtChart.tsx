@@ -10,7 +10,6 @@ import {
   ReferenceLine, 
   Cell 
 } from 'recharts';
-import { AlertTriangle, Wrench, ArrowRight } from 'lucide-react';
 import { CombustorCan } from '../types';
 
 interface CombustorEgtChartProps {
@@ -31,93 +30,14 @@ export const CombustorEgtChart: React.FC<CombustorEgtChartProps> = ({
     <div className="w-full h-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-3 sm:p-4 2xl:p-4.5 shadow-xs flex flex-col justify-between transition-colors duration-200 min-h-0">
       {/* Top Section: Header, Metrics, Chart */}
       <div className="flex-1 min-h-0 flex flex-col">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-1.5 sm:pb-2 border-b border-slate-100 dark:border-slate-700/60 shrink-0">
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                Combustor EGT Spread — GT-2
-              </h3>
-            </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Annular thermocouple array across Cans 1–14 • Alarm trip limit: ±18°C from mean
-            </p>
-          </div>
-        </div>
-
-        {/* Dynamic Metric Tiles Strip aligned horizontally with curvy sparklines */}
-        <div className="grid grid-cols-4 gap-1.5 my-1.5 text-xs shrink-0">
-          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <div className="text-left min-w-0">
-              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Spread Anomaly</span>
-              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block truncate">26.0°C Spread</span>
-            </div>
-            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 13 C 8 12, 14 15, 20 8 C 25 3, 30 11, 34 4"
-                fill="none"
-                stroke="#f43f5e"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="34" cy="4" r="2" fill="#f43f5e" />
-            </svg>
-          </div>
-          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <div className="text-left min-w-0">
-              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Array Mean EGT</span>
-              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">603°C</span>
-            </div>
-            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 9 C 8 12, 15 6, 22 10 C 28 8, 30 11, 34 9"
-                fill="none"
-                stroke="#64748b"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="34" cy="9" r="2" fill="#64748b" />
-            </svg>
-          </div>
-          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <div className="text-left min-w-0">
-              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Allowable Band</span>
-              <span className="font-mono font-bold text-slate-900 dark:text-slate-100 text-[11px] sm:text-xs mt-0.5 block truncate">585°C – 621°C</span>
-            </div>
-            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 8 C 8 6, 15 10, 22 7 C 28 9, 31 7, 34 8"
-                fill="none"
-                stroke="#10b981"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="34" cy="8" r="2" fill="#10b981" />
-            </svg>
-          </div>
-          <div className="flex items-center justify-between gap-1 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-lg p-1.5">
-            <div className="text-left min-w-0">
-              <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 block uppercase tracking-wider truncate">Can 4 Deviation</span>
-              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-[11px] sm:text-xs mt-0.5 block truncate">578°C (-26°C)</span>
-            </div>
-            <svg width="36" height="18" viewBox="0 0 36 18" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 6 C 8 7, 15 13, 22 11 C 28 15, 31 16, 34 15"
-                fill="none"
-                stroke="#f43f5e"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="34" cy="15" r="2" fill="#f43f5e" />
-            </svg>
-          </div>
+        <div className="flex items-center justify-between gap-1.5 pb-1.5 sm:pb-2 border-b border-slate-100 dark:border-slate-700/60 shrink-0">
+          <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+            Combustor EGT Spread — GT-2
+          </h3>
         </div>
 
         {/* Recharts Bar Chart */}
-        <div className="flex-1 min-h-[95px] sm:min-h-[110px] 2xl:min-h-[130px] w-full pt-1 relative">
+        <div className="flex-1 min-h-[140px] sm:min-h-[160px] 2xl:min-h-[180px] w-full pt-1 relative">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 14, right: 14, left: -22, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" opacity={0.2} vertical={false} />
@@ -199,31 +119,6 @@ export const CombustorEgtChart: React.FC<CombustorEgtChartProps> = ({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* AI Insight Callout & Advisory Action Button */}
-      <div className="mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/60 space-y-1.5 shrink-0">
-        <div className="p-1.5 sm:p-2 rounded-lg bg-amber-500/5 dark:bg-amber-950/20 border border-amber-500/20 text-slate-800 dark:text-slate-200 flex items-start gap-2">
-          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-          <div className="text-[10px] sm:text-[11px] leading-snug">
-            <span className="font-bold text-amber-950 dark:text-amber-300">⚠️ EGT Spread Exceedance: </span>
-            Can #4 is running 26°C below average due to fuel nozzle #4 servo valve drift. Plant DCS has initiated automated 18 MW derating to protect stage 1 turbine blades.
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
-            Workflow: Collaborative Condition Monitoring
-          </span>
-          <button
-            onClick={onLogCase}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition cursor-pointer group shrink-0"
-          >
-            <Wrench className="h-3 w-3" />
-            <span>Log Case for Can 4</span>
-            <ArrowRight className="h-2.5 w-2.5 group-hover:translate-x-0.5 transition" />
-          </button>
         </div>
       </div>
     </div>

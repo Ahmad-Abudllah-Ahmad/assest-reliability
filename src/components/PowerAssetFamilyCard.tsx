@@ -168,20 +168,9 @@ export const PowerAssetFamilyCard: React.FC<PowerAssetFamilyCardProps> = ({
       <div className="flex-1 min-h-0 flex flex-col justify-between">
         {/* Header */}
         <div className="flex items-center justify-between gap-2 pb-1.5 sm:pb-2 border-b border-slate-100 dark:border-slate-700/60 shrink-0">
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                Active Power Distribution
-              </h3>
-            </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-              Prime mover breakdown & contingency impact
-            </p>
-          </div>
-
-          <span className="text-[10px] sm:text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 shrink-0">
-            3 Online
-          </span>
+          <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+            Active Power Distribution
+          </h3>
         </div>
 
         {/* Donut Chart: Scaled Centered Gauge */}

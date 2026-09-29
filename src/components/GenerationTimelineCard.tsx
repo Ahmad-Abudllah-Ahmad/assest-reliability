@@ -13,9 +13,7 @@ import {
 import { 
   Clock, 
   Sparkles, 
-  ArrowRight, 
-  ArrowLeft,
-  Zap
+  ArrowLeft
 } from 'lucide-react';
 
 interface TimelinePoint {
@@ -144,87 +142,9 @@ export const GenerationTimelineCard: React.FC<GenerationTimelineCardProps> = ({
               </button>
             )}
 
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-                  24-Hour Generation vs. Contract Target & Peak Pricing
-                </h3>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Live Telemetry (1 Hz)
-                </span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Active schedule vs 480 MW PPA obligation & high-revenue evening tariff window
-              </p>
-            </div>
-          </div>
-
-          {/* Action Area: CTA Button */}
-          <div className="flex items-center self-start sm:self-auto shrink-0">
-            <button
-              onClick={onNavigateToOptimizer}
-              className="inline-flex items-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-3.5 rounded-lg text-[11px] sm:text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xs transition cursor-pointer group"
-            >
-              <Zap className="h-3.5 w-3.5" />
-              <span>Optimize Dispatch (Recover {derateGap} MW)</span>
-              <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition" />
-            </button>
-          </div>
-        </div>
-
-        {/* Legend Summary Bar with live updating values & curvy sparklines */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-2.5 my-1.5 sm:my-2 text-xs shrink-0">
-          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <div className="text-left min-w-0">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Live Actual Output</span>
-              <span className="font-mono font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm mt-0.5 block truncate">{currentMW.toFixed(1)} MW</span>
-            </div>
-            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 13 C 10 16, 16 6, 24 11 C 32 16, 36 6, 42 8"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="42" cy="8" r="2.5" fill="#3b82f6" />
-            </svg>
-          </div>
-          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <div className="text-left min-w-0">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Contract Target</span>
-              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm mt-0.5 block truncate">480 MW Baseline</span>
-            </div>
-            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 10 C 12 7, 20 12, 28 8 C 34 6, 38 10, 42 7"
-                fill="none"
-                stroke="#10b981"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="42" cy="7" r="2.5" fill="#10b981" />
-            </svg>
-          </div>
-          <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-            <div className="text-left min-w-0">
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold block tracking-wider truncate">Thermal Derate</span>
-              <span className="font-mono font-bold text-rose-600 dark:text-rose-400 text-xs sm:text-sm mt-0.5 block truncate">-{Math.round(derateGap)} MW Gap</span>
-            </div>
-            <svg width="44" height="20" viewBox="0 0 44 20" className="shrink-0 overflow-visible">
-              <path
-                d="M 2 6 C 10 7, 18 14, 26 10 C 32 15, 36 17, 42 16"
-                fill="none"
-                stroke="#f43f5e"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="42" cy="16" r="2.5" fill="#f43f5e" />
-            </svg>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+              24-Hour Generation vs. Contract Target & Peak Pricing
+            </h3>
           </div>
         </div>
 
