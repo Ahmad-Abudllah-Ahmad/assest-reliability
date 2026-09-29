@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Wrench, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { CaseItem, CaseSeverity, CaseStatus } from '../types';
 
@@ -6,23 +6,64 @@ interface CreateCaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (newCase: Omit<CaseItem, 'id' | 'timestamp' | 'telemetryPoints'>) => void;
+  equipmentOptions?: string[];
+  engineerOptions?: string[];
+  defaultEquipment?: string;
+  defaultAssignee?: string;
+  titlePlaceholder?: string;
 }
+
+const DEFAULT_EQUIPMENT_OPTIONS = [
+  'Gas Turbine GT-1',
+  'Gas Turbine GT-2',
+  'Steam Turbine ST-1',
+  'GSU Step-Up Transformer T-01',
+  'Boiler Feed Pump BFP-1',
+  'Turbine Lube Oil Skid'
+];
+
+const DEFAULT_ENGINEER_OPTIONS = [
+  'Bob Smith',
+  'Alice Johnson',
+  'Charlie Davis',
+  'Unassigned'
+];
 
 export const CreateCaseModal: React.FC<CreateCaseModalProps> = ({
   isOpen,
   onClose,
-  onSubmit
+  onSubmit,
+  equipmentOptions,
+  engineerOptions,
+  defaultEquipment,
+  defaultAssignee,
+  titlePlaceholder
 }) => {
+  const activeEquipList = equipmentOptions || DEFAULT_EQUIPMENT_OPTIONS;
+  const activeEngList = engineerOptions || DEFAULT_ENGINEER_OPTIONS;
+
   const [title, setTitle] = useState('');
-  const [equipment, setEquipment] = useState('Gas Turbine GT-2');
+  const [equipment, setEquipment] = useState(defaultEquipment || activeEquipList[0]);
   const [severity, setSeverity] = useState<CaseSeverity>('High');
-  const [assignee, setAssignee] = useState('Bob Smith');
+  const [assignee, setAssignee] = useState(defaultAssignee || activeEngList[0]);
   const [status, setStatus] = useState<CaseStatus>('Unassigned');
   const [rootCause, setRootCause] = useState('');
   const [parts, setParts] = useState('');
   const [metricName, setMetricName] = useState('Exhaust Temperature Spread');
   const [observedValue, setObservedValue] = useState('26°C');
   const [thresholdValue, setThresholdValue] = useState('18°C');
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitle('');
+      setEquipment(defaultEquipment || (equipmentOptions && equipmentOptions[0]) || DEFAULT_EQUIPMENT_OPTIONS[1]);
+      setSeverity('High');
+      setAssignee(defaultAssignee || (engineerOptions && engineerOptions[0]) || DEFAULT_ENGINEER_OPTIONS[0]);
+      setStatus('Unassigned');
+      setRootCause('');
+      setParts('');
+    }
+  }, [isOpen, defaultEquipment, defaultAssignee, equipmentOptions, engineerOptions]);
 
   if (!isOpen) return null;
 
@@ -88,7 +129,7 @@ export const CreateCaseModal: React.FC<CreateCaseModalProps> = ({
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. GT-2 Nozzle valve drift & combustion asymmetry"
+              placeholder={titlePlaceholder || "e.g. GT-2 Nozzle valve drift & combustion asymmetry"}
               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-xs text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
             />
           </div>
@@ -103,12 +144,9 @@ export const CreateCaseModal: React.FC<CreateCaseModalProps> = ({
                 onChange={(e) => setEquipment(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
               >
-                <option value="Gas Turbine GT-1">Gas Turbine GT-1</option>
-                <option value="Gas Turbine GT-2">Gas Turbine GT-2</option>
-                <option value="Steam Turbine ST-1">Steam Turbine ST-1</option>
-                <option value="GSU Step-Up Transformer T-01">GSU Transformer T-01</option>
-                <option value="Boiler Feed Pump BFP-1">Boiler Feed Pump BFP-1</option>
-                <option value="Turbine Lube Oil Skid">Turbine Lube Oil Skid</option>
+                {activeEquipList.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
 
@@ -139,10 +177,9 @@ export const CreateCaseModal: React.FC<CreateCaseModalProps> = ({
                 onChange={(e) => setAssignee(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
               >
-                <option value="Bob Smith">Bob Smith (Thermal Specialist)</option>
-                <option value="Alice Johnson">Alice Johnson (Rotating Machinery)</option>
-                <option value="Charlie Davis">Charlie Davis (Lube & Tribology)</option>
-                <option value="Unassigned">Unassigned Pool</option>
+                {activeEngList.map((eng) => (
+                  <option key={eng} value={eng}>{eng}</option>
+                ))}
               </select>
             </div>
 

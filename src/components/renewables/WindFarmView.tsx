@@ -63,6 +63,7 @@ import {
 import { ActiveTab } from '../../types';
 import { InvestigationDrawer } from '../InvestigationDrawer';
 import { AddMachineryModal, NewMachineryData } from '../AddMachineryModal';
+import { CreateCaseModal } from '../CreateCaseModal';
 import {
   WIND_TURBINES,
   WIND_POWER_CURVE,
@@ -1065,7 +1066,7 @@ const SEVERITY_WEIGHT_WIND: Record<string, number> = {
   'Low': 1,
 };
 
-function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseSeverity, handleLogCase, onSelectCase, onNavigateToCatalog }: any) {
+function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseSeverity, handleLogCase, onSelectCase, onNavigateToCatalog, onOpenCreateModal }: any) {
   const [draggedCaseId, setDraggedCaseId] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
 
@@ -1115,7 +1116,7 @@ function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseS
         {/* Quick Action: Log New Case */}
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low')}
+            onClick={onOpenCreateModal || (() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low'))}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-600/20 transition cursor-pointer active:scale-95"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -1326,6 +1327,7 @@ export const WindFarmView: React.FC<{
   const [tasks, setTasks] = useState(WIND_TASKS);
   const [maintLogs, setMaintLogs] = useState(WIND_MAINT_HISTORY);
   const [caseCounter, setCaseCounter] = useState(6);
+  const [isCreateCaseOpen, setIsCreateCaseOpen] = useState(false);
 
   const showToast = (title: string, message: string) => {
     setToast({ title, message });
@@ -1406,6 +1408,34 @@ export const WindFarmView: React.FC<{
     });
   };
 
+  const handleCreateWindCase = (caseData: any) => {
+    const newCaseId = `WND-00${cases.length + 1}`;
+    const newCase = {
+      id: newCaseId,
+      column: caseData.status === 'Planned Maintenance' ? 'scheduled' : caseData.status === 'Diagnosing' ? 'investigating' : 'new',
+      title: caseData.title,
+      equipment: caseData.equipment,
+      asset: (caseData.equipment.match(/WT-\d+/) || [caseData.equipment])[0],
+      assignee: caseData.assignee,
+      severity: caseData.severity,
+      status: caseData.status,
+      timestamp: 'Just now',
+      rootCause: caseData.rootCause || 'Manual drivetrain investigation case logged.',
+      requiredParts: caseData.requiredParts || ['High-Speed Bearing Assembly #GBX-300', 'Synthetic ISO VG 320 Flush Fluid'],
+      estimatedTime: caseData.estimatedTime || '3.5 Hours',
+      metricName: caseData.metricName || 'Nacelle Vibration',
+      observedValue: caseData.observedValue || '3.8 mm/s',
+      thresholdValue: caseData.thresholdValue || '3.0 mm/s',
+      telemetryPoints: [
+        { time: '10:00', value: 2.5, baseline: 3.0, unit: 'mm/s' },
+        { time: '11:00', value: 3.1, baseline: 3.0, unit: 'mm/s' },
+        { time: '12:00', value: 3.8, baseline: 3.0, unit: 'mm/s' }
+      ]
+    };
+    setCases((prev: any[]) => [newCase, ...prev]);
+    showToast(`Case Created (${newCaseId})`, `Work order ticket "${caseData.title}" logged successfully.`);
+  };
+
   const handleUpdateCaseStatus = (caseId: string, newStatus: string) => {
     setCases(prev => prev.map(c => c.id === caseId ? { ...c, status: newStatus } : c));
     
@@ -1480,6 +1510,7 @@ export const WindFarmView: React.FC<{
           handleUpdateCaseStatus={handleUpdateCaseStatus}
           handleUpdateCaseSeverity={handleUpdateCaseSeverity}
           handleLogCase={handleLogCase}
+          onOpenCreateModal={() => setIsCreateCaseOpen(true)}
           onSelectCase={(c: any) => setSelectedCase(enrichWindInvestigationCase(c))}
           onNavigateToCatalog={onNavigateToCatalog}
         />
@@ -1511,6 +1542,35 @@ export const WindFarmView: React.FC<{
           </div>
         </div>
       )}
+
+      <CreateCaseModal
+        isOpen={isCreateCaseOpen}
+        onClose={() => setIsCreateCaseOpen(false)}
+        onSubmit={handleCreateWindCase}
+        equipmentOptions={[
+          'Wind Turbine WT-01',
+          'Wind Turbine WT-02',
+          'Wind Turbine WT-03',
+          'Wind Turbine WT-07',
+          'Wind Turbine WT-09',
+          'Wind Turbine WT-11',
+          'Wind Turbine WT-14',
+          'Wind Turbine WT-19',
+          'Wind Turbine WT-22',
+          'Collector Substation Transformer',
+          'Main Met Mast Sensor Mast'
+        ]}
+        engineerOptions={[
+          'Sarah J. (Turbine Specialist)',
+          'Mike T. (Electrical Systems)',
+          'Rope Team A (Blade Inspection)',
+          'Marcus Vance (Drivetrain)',
+          'Unassigned'
+        ]}
+        defaultEquipment="Wind Turbine WT-07"
+        defaultAssignee="Sarah J. (Turbine Specialist)"
+        titlePlaceholder="e.g. WT-07 Gearbox high-speed bearing vibration spike"
+      />
     </div>
   );
 };

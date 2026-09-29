@@ -55,6 +55,7 @@ import {
 import { ActiveTab } from '../../types';
 import { InvestigationDrawer } from '../InvestigationDrawer';
 import { AddMachineryModal, NewMachineryData } from '../AddMachineryModal';
+import { CreateCaseModal } from '../CreateCaseModal';
 import {
   SOLAR_INVERTERS,
   SOLAR_TRACKERS,
@@ -1104,7 +1105,7 @@ const SEVERITY_WEIGHT_SOLAR: Record<string, number> = {
   'Low': 1,
 };
 
-function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseSeverity, handleLogCase, onSelectCase, onNavigateToCatalog }: any) {
+function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseSeverity, handleLogCase, onSelectCase, onNavigateToCatalog, onOpenCreateModal }: any) {
   const [draggedCaseId, setDraggedCaseId] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
 
@@ -1154,7 +1155,7 @@ function CasesPage({ showToast, cases, handleUpdateCaseStatus, handleUpdateCaseS
         {/* Quick Action: Log New Case */}
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low')}
+            onClick={onOpenCreateModal || (() => handleLogCase('Fleet-Wide', 'General', 'Manual case created', 'Low'))}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-600/20 transition cursor-pointer active:scale-95"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -1365,6 +1366,7 @@ export const SolarFarmView: React.FC<{
   const [tasks, setTasks] = useState(SOLAR_TASKS);
   const [maintLogs, setMaintLogs] = useState(SOLAR_MAINT_HISTORY);
   const [caseCounter, setCaseCounter] = useState(6);
+  const [isCreateCaseOpen, setIsCreateCaseOpen] = useState(false);
 
   const showToast = (title: string, message: string) => {
     setToast({ title, message });
@@ -1448,6 +1450,34 @@ export const SolarFarmView: React.FC<{
     });
   };
 
+  const handleCreateSolarCase = (caseData: any) => {
+    const newCaseId = `SOL-00${cases.length + 1}`;
+    const newCase = {
+      id: newCaseId,
+      column: caseData.status === 'Planned Maintenance' ? 'scheduled' : caseData.status === 'Diagnosing' ? 'investigating' : 'new',
+      title: caseData.title,
+      equipment: caseData.equipment,
+      asset: (caseData.equipment.match(/INV-\d+|Zone [A-Z]|BESS-\d+/) || [caseData.equipment])[0],
+      assignee: caseData.assignee,
+      severity: caseData.severity,
+      status: caseData.status,
+      timestamp: 'Just now',
+      rootCause: caseData.rootCause || 'Manual solar inverter anomaly logged.',
+      requiredParts: caseData.requiredParts || ['IGBT Power Module #PM-1200', 'DC Bus Capacitor Pack'],
+      estimatedTime: caseData.estimatedTime || '2.0 Hours',
+      metricName: caseData.metricName || 'Inverter Core Temp',
+      observedValue: caseData.observedValue || '58°C',
+      thresholdValue: caseData.thresholdValue || '50°C',
+      telemetryPoints: [
+        { time: '10:00', value: 45, baseline: 50, unit: '°C' },
+        { time: '11:00', value: 52, baseline: 50, unit: '°C' },
+        { time: '12:00', value: 58, baseline: 50, unit: '°C' }
+      ]
+    };
+    setCases((prev: any[]) => [newCase, ...prev]);
+    showToast(`Case Created (${newCaseId})`, `Work order ticket "${caseData.title}" logged successfully.`);
+  };
+
   const handleUpdateCaseStatus = (caseId: string, newStatus: string) => {
     setCases(prev => prev.map(c => c.id === caseId ? { ...c, status: newStatus } : c));
     
@@ -1523,6 +1553,7 @@ export const SolarFarmView: React.FC<{
           handleUpdateCaseStatus={handleUpdateCaseStatus}
           handleUpdateCaseSeverity={handleUpdateCaseSeverity}
           handleLogCase={handleLogCase}
+          onOpenCreateModal={() => setIsCreateCaseOpen(true)}
           onSelectCase={(c: any) => setSelectedCase(enrichSolarInvestigationCase(c))}
           onNavigateToCatalog={onNavigateToCatalog}
         />
@@ -1554,6 +1585,33 @@ export const SolarFarmView: React.FC<{
           </div>
         </div>
       )}
+
+      <CreateCaseModal
+        isOpen={isCreateCaseOpen}
+        onClose={() => setIsCreateCaseOpen(false)}
+        onSubmit={handleCreateSolarCase}
+        equipmentOptions={[
+          'Central Inverter INV-01',
+          'Central Inverter INV-04',
+          'Central Inverter INV-08',
+          'Zone A Single-Axis Trackers',
+          'Zone B Single-Axis Trackers',
+          'Zone D PV Arrays',
+          'BESS Battery Rack 3 (BESS-01)',
+          'MV Step-Up Transformer TX-02',
+          'Combiner Box Array CB-14'
+        ]}
+        engineerOptions={[
+          'David L. (Inverter Lead)',
+          'Elena R. (Thermography Specialist)',
+          'Tech Crew 1 (Field Robotics)',
+          'Chloe Dupont (Array Balance)',
+          'Unassigned'
+        ]}
+        defaultEquipment="Central Inverter INV-08"
+        defaultAssignee="David L. (Inverter Lead)"
+        titlePlaceholder="e.g. INV-08 DC Bus capacitor thermal rise & derate"
+      />
     </div>
   );
 };

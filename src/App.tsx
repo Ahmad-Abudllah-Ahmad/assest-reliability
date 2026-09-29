@@ -1085,6 +1085,25 @@ RANKED PRIORITY SEQUENCE:
         isOpen={isCreateCaseOpen}
         onClose={() => setIsCreateCaseOpen(false)}
         onSubmit={handleCreateCustomCase}
+        equipmentOptions={activeFacility === 'oilgas' ? [
+          'Main Oil Line Pump P-101A',
+          'Gas Export Compressor K-201',
+          'Water Injection Pump P-301',
+          'HP Production Separator V-301',
+          'Platform Wellhead Alpha W-01',
+          'Crude Storage Tank TK-501A',
+          'Flare Knockout Drum V-401'
+        ] : undefined}
+        engineerOptions={activeFacility === 'oilgas' ? [
+          'Marcus Vance (Senior Rotating Equipment Lead)',
+          'Sarah Lin (Offshore Mechanical Lead)',
+          'David Kalu (Process Operations Supervisor)',
+          'Control Room Shift Lead',
+          'Unassigned'
+        ] : undefined}
+        defaultEquipment={activeFacility === 'oilgas' ? 'Main Oil Line Pump P-101A' : 'Gas Turbine GT-2'}
+        defaultAssignee={activeFacility === 'oilgas' ? 'Sarah Lin (Offshore Mechanical Lead)' : 'Bob Smith'}
+        titlePlaceholder={activeFacility === 'oilgas' ? 'e.g. MOL Pump P-101A mechanical seal barrier pressure loss' : 'e.g. GT-2 Nozzle valve drift & combustion asymmetry'}
       />
 
       <AiCopilotDrawer
