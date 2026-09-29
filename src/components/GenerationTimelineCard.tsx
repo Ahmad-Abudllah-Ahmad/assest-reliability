@@ -12,7 +12,6 @@ import {
 } from 'recharts';
 import { 
   Clock, 
-  Sparkles, 
   ArrowLeft
 } from 'lucide-react';
 
@@ -240,19 +239,6 @@ export const GenerationTimelineCard: React.FC<GenerationTimelineCardProps> = ({
               />
             </ComposedChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Plain-English AI Insight Callout Box with Live Values */}
-      <div className="mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-700/60 shrink-0">
-        <div className="p-2 sm:p-2.5 rounded-xl border bg-amber-500/5 dark:bg-amber-950/20 border-amber-500/20">
-          <div className="flex items-start gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-snug">
-              <strong className="text-slate-900 dark:text-slate-100">Generation Status: </strong>
-              Plant is delivering {currentMW.toFixed(1)} MW, running {derateGap} MW below contract target due to GT-2 thermal derating. This generation deficit will cost an estimated $16,400 today, with $11,200 of that loss occurring during the 17:00–19:30 evening price spike when power sells at $145/MWh.
-            </div>
-          </div>
         </div>
       </div>
     </div>
