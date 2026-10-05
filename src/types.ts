@@ -1,4 +1,4 @@
-export type ActiveTab = 'overview' | 'assets' | 'maintenance' | 'optimizer' | 'cases' | 'diagnostics';
+export type ActiveTab = 'overview' | 'assets' | 'maintenance' | 'optimizer' | 'cases' | 'diagnostics' | 'alerts' | 'reports' | 'rules';
 
 export type CaseSeverity = 'Critical' | 'High' | 'Medium' | 'Low';
 

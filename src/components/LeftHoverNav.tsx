@@ -8,13 +8,17 @@ import {
   Database,
   Leaf,
   Cpu,
-  ArrowLeft
+  ArrowLeft,
+  AlertTriangle,
+  FileText,
+  Sliders
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { OgActiveTab } from '../types/oilGasTypes';
 
 interface LeftHoverNavProps {
   facility: 'power' | 'oilgas';
+  powerSource?: 'gas' | 'wind' | 'solar';
   activeTab: string;
   onTabChange: (tab: any) => void;
   onNavigateToCatalog?: () => void;
@@ -28,13 +32,55 @@ interface LeftHoverNavProps {
 
 export const LeftHoverNav: React.FC<LeftHoverNavProps> = ({
   facility,
+  powerSource = 'gas',
   activeTab,
   onTabChange,
   onNavigateToCatalog,
   openCasesCount,
   unresolvedInspectionsCount = 0
 }) => {
-  const currentTab = activeTab === 'diagnostics' ? 'overview' : activeTab;
+  const currentTab = activeTab === 'diagnostics' ? 'overview' : activeTab === 'maintenance' && powerSource === 'gas' ? 'cases' : activeTab;
+
+  // Gas Combined Cycle Reliability Navigation Tabs
+  const ccgtNavItems = [
+    {
+      id: 'overview',
+      label: 'Reliability Command Center',
+      shortLabel: 'Overview',
+      icon: Activity,
+      badge: null
+    },
+    {
+      id: 'assets',
+      label: 'Asset Condition Matrix',
+      shortLabel: 'Assets',
+      icon: Factory,
+      badge: '5 Units'
+    },
+    {
+      id: 'alerts',
+      label: 'Alerts & Recommendations',
+      shortLabel: 'Alerts',
+      icon: AlertTriangle,
+      badge: '3 Alerts',
+      badgeStyle: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20'
+    },
+    {
+      id: 'cases',
+      label: 'Work Orders & Maintenance',
+      shortLabel: 'Work Orders',
+      icon: KanbanSquare,
+      badge: openCasesCount > 0 ? `${openCasesCount}` : null,
+      badgeStyle: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20'
+    },
+    {
+      id: 'rules',
+      label: 'Rules & Thresholds Engine',
+      shortLabel: 'Rules',
+      icon: Sliders,
+      badge: null
+    }
+  ];
 
   // Facility-specific navigation tabs
   const powerNavItems = [
@@ -118,7 +164,9 @@ export const LeftHoverNav: React.FC<LeftHoverNavProps> = ({
     }
   ];
 
-  const navItems = facility === 'power' ? powerNavItems : oilGasNavItems;
+  const navItems = facility === 'power' 
+    ? (powerSource === 'gas' ? ccgtNavItems : powerNavItems) 
+    : oilGasNavItems;
 
   return (
     <aside 

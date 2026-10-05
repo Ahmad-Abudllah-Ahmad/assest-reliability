@@ -30,6 +30,7 @@ import { Toast } from './components/Toast';
 import { WindFarmView } from './components/renewables/WindFarmView';
 import { SolarFarmView } from './components/renewables/SolarFarmView';
 import { ContingencyScenario } from './components/PowerAssetFamilyCard';
+import { CcgtReliabilityModule } from './modules/ccgt-reliability/CcgtReliabilityModule';
 
 // Offshore Oil & Gas Views & Data
 import { OilGasHeader } from './components/oilgas/OilGasHeader';
@@ -809,6 +810,7 @@ RANKED PRIORITY SEQUENCE:
       {/* Sleek Left-Side Hover-Expanding Navigation Dock */}
       <LeftHoverNav
         facility={activeFacility}
+        powerSource={powerSourceTab}
         activeTab={activeFacility === 'power' ? activeTab : ogActiveTab}
         onTabChange={(tab) => {
           if (activeFacility === 'power') {
@@ -839,72 +841,11 @@ RANKED PRIORITY SEQUENCE:
         {activeFacility === 'power' && (
           <>
             {powerSourceTab === 'gas' && (
-          <>
-            {/* Page 1: Plant Overview & EDA Charts */}
-            {(activeTab === 'overview' || activeTab === 'diagnostics') && (
-              <MachineDiagnosticsView
-                assets={machineAssets}
-                combustorCans={combustorCans}
-                heatRateData={heatRateData}
-                currentMW={currentMW}
-                targetMW={targetMW}
-                heatRate={heatRate}
-                currentMargin={4120}
-                fleetHealthPct={88}
-                onSelectAsset={(asset) => setSelectedAsset(asset)}
-                onAdvisoryAction={handleAdvisoryAction}
-                onLogEgtCase={handleLogEgtCase}
-                onLogHeatRateCase={handleLogHeatRateCase}
-                onNavigateToOptimizer={handleNavigateToOptimizer}
-                onNavigateToCatalog={handleBackToCatalog}
-                onLogEmergencyCase={handleLogEmergencyCase}
-                simulatedScenario={simulatedScenario}
-                onToggleSimulateScenario={handleToggleSimulateScenario}
-                onOpenJargonGuide={() => setIsGlossaryOpen(true)}
-                onOpenCase={(caseId) => {
-                  const targetCase = cases.find(c => c.id === caseId);
-                  setActiveTab('cases');
-                  if (targetCase) setSelectedCase(targetCase);
-                }}
-              />
-            )}
-
-            {/* Page 2: All Monitored Assets Directory */}
-            {activeTab === 'assets' && (
-              <MonitoredAssetsView
-                assets={monitoredAssets}
-                onSelectAsset={handleSelectMonitoredAsset}
-                onLogCase={handleLogCaseFromMonitoredAsset}
-                onNavigateToCatalog={handleBackToCatalog}
-                onAddAsset={handleAddMonitoredAsset}
-              />
-            )}
-
-            {/* Page 3: Maintenance Records & Asset Inspections */}
-            {activeTab === 'maintenance' && (
-              <MaintenanceInspectionsView
-                maintenanceRecords={maintenanceRecords}
-                unresolvedInspections={unresolvedInspections}
-                completedInspections={completedInspections}
-                onScheduleInspection={handleScheduleInspection}
-                onViewReport={handleViewReport}
+              <CcgtReliabilityModule
+                activeTab={activeTab}
+                onTabChange={(tab) => setActiveTab(tab as ActiveTab)}
                 onNavigateToCatalog={handleBackToCatalog}
               />
-            )}
-
-
-            {/* Page 5: Cases & Work Orders Kanban Board */}
-            {activeTab === 'cases' && (
-              <CasesBoardView
-                cases={cases}
-                onOpenCreateModal={() => setIsCreateCaseOpen(true)}
-                onSelectCase={(c) => setSelectedCase(c)}
-                onUpdateCaseStatus={handleUpdateCaseStatus}
-                onUpdateCaseSeverity={handleUpdateCaseSeverity}
-                onNavigateToCatalog={handleBackToCatalog}
-              />
-            )}
-          </>
             )}
 
             {powerSourceTab === 'wind' && (
