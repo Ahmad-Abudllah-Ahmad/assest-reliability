@@ -39,7 +39,7 @@ export const LeftHoverNav: React.FC<LeftHoverNavProps> = ({
   openCasesCount,
   unresolvedInspectionsCount = 0
 }) => {
-  const currentTab = activeTab === 'diagnostics' ? 'overview' : activeTab === 'maintenance' && powerSource === 'gas' ? 'cases' : activeTab;
+  const currentTab = activeTab === 'diagnostics' ? 'overview' : (activeTab === 'maintenance' && (powerSource === 'gas' || powerSource === 'wind' || powerSource === 'solar')) ? 'cases' : activeTab;
 
   // Gas Combined Cycle Reliability Navigation Tabs
   const ccgtNavItems = [
@@ -164,8 +164,90 @@ export const LeftHoverNav: React.FC<LeftHoverNavProps> = ({
     }
   ];
 
+  // Wind Reliability Navigation Tabs
+  const windNavItems = [
+    {
+      id: 'overview',
+      label: 'Reliability Command Center',
+      shortLabel: 'Overview',
+      icon: Activity,
+      badge: null
+    },
+    {
+      id: 'assets',
+      label: 'Asset Condition Matrix',
+      shortLabel: 'Assets',
+      icon: Factory,
+      badge: '6 Turbines'
+    },
+    {
+      id: 'alerts',
+      label: 'Alerts & Recommendations',
+      shortLabel: 'Alerts',
+      icon: AlertTriangle,
+      badge: '2 Alerts',
+      badgeStyle: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20'
+    },
+    {
+      id: 'cases',
+      label: 'Work Orders & Maintenance',
+      shortLabel: 'Work Orders',
+      icon: KanbanSquare,
+      badge: openCasesCount > 0 ? `${openCasesCount}` : null,
+      badgeStyle: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20'
+    },
+    {
+      id: 'rules',
+      label: 'Rules & Thresholds Engine',
+      shortLabel: 'Rules',
+      icon: Sliders,
+      badge: null
+    }
+  ];
+
+  // Solar Reliability Navigation Tabs
+  const solarNavItems = [
+    {
+      id: 'overview',
+      label: 'Reliability Command Center',
+      shortLabel: 'Overview',
+      icon: Activity,
+      badge: null
+    },
+    {
+      id: 'assets',
+      label: 'Asset Condition Matrix',
+      shortLabel: 'Assets',
+      icon: Factory,
+      badge: '14 Units'
+    },
+    {
+      id: 'alerts',
+      label: 'Alerts & Recommendations',
+      shortLabel: 'Alerts',
+      icon: AlertTriangle,
+      badge: '2 Alerts',
+      badgeStyle: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20'
+    },
+    {
+      id: 'cases',
+      label: 'Work Orders & Maintenance',
+      shortLabel: 'Work Orders',
+      icon: KanbanSquare,
+      badge: openCasesCount > 0 ? `${openCasesCount}` : null,
+      badgeStyle: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20'
+    },
+    {
+      id: 'rules',
+      label: 'Rules & Thresholds Engine',
+      shortLabel: 'Rules',
+      icon: Sliders,
+      badge: null
+    }
+  ];
+
   const navItems = facility === 'power' 
-    ? (powerSource === 'gas' ? ccgtNavItems : powerNavItems) 
+    ? (powerSource === 'gas' ? ccgtNavItems : powerSource === 'wind' ? windNavItems : powerSource === 'solar' ? solarNavItems : powerNavItems) 
     : oilGasNavItems;
 
   return (
