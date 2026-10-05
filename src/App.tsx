@@ -31,6 +31,8 @@ import { WindFarmView } from './components/renewables/WindFarmView';
 import { SolarFarmView } from './components/renewables/SolarFarmView';
 import { ContingencyScenario } from './components/PowerAssetFamilyCard';
 import { CcgtReliabilityModule } from './modules/ccgt-reliability/CcgtReliabilityModule';
+import { WindReliabilityModule } from './modules/wind-reliability/WindReliabilityModule';
+import { SolarReliabilityModule } from './modules/solar-reliability/SolarReliabilityModule';
 
 // Offshore Oil & Gas Views & Data
 import { OilGasHeader } from './components/oilgas/OilGasHeader';
@@ -849,11 +851,19 @@ RANKED PRIORITY SEQUENCE:
             )}
 
             {powerSourceTab === 'wind' && (
-              <WindFarmView activeTab={activeTab} setActiveTab={setActiveTab} onNavigateToCatalog={handleBackToCatalog} />
+              <WindReliabilityModule
+                activeTab={activeTab}
+                onTabChange={(tab) => setActiveTab(tab as ActiveTab)}
+                onNavigateToCatalog={handleBackToCatalog}
+              />
             )}
 
             {powerSourceTab === 'solar' && (
-              <SolarFarmView activeTab={activeTab} setActiveTab={setActiveTab} onNavigateToCatalog={handleBackToCatalog} />
+              <SolarReliabilityModule
+                activeTab={activeTab}
+                onTabChange={(tab) => setActiveTab(tab as ActiveTab)}
+                onNavigateToCatalog={handleBackToCatalog}
+              />
             )}
           </>
         )}
